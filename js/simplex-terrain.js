@@ -9,7 +9,7 @@ function init() {
     //GUI
 
     var gui = new dat.GUI({
-        height : 5 * 32 - 1
+        height: 5 * 32 - 1
     });
 
     var params = {
@@ -22,46 +22,46 @@ function init() {
         level: 1
     };
 
-    gui.add(params, 'dimension').min(100).max(2000).step(10).onChange(function (e) {
+    gui.add(params, 'dimension').min(100).max(2000).step(10).onChange(function(e) {
         scene.remove(mesh);
-        params.segment=Math.floor(params.segment);
+        params.segment = Math.floor(params.segment);
         createMesh();
     });
 
-    gui.add(params, 'segment').min(2).max(512).step(1).onChange(function (e) {
+    gui.add(params, 'segment').min(2).max(512).step(1).onChange(function(e) {
         scene.remove(mesh);
-        params.segment=Math.floor(params.segment);
-        params.fact=Math.floor(params.segment/2);
+        params.segment = Math.floor(params.segment);
+        params.fact = Math.floor(params.segment / 2);
         createMesh();
     });
 
-    gui.add(params, 'fact').min(2).max(512).listen().step(1).onChange(function (e) {
+    gui.add(params, 'fact').min(2).max(512).listen().step(1).onChange(function(e) {
         scene.remove(mesh);
-        params.segment=Math.floor(params.segment);
+        params.segment = Math.floor(params.segment);
         createMesh();
     });
 
-    gui.add(params, 'mult').min(0).max(1000).step(5).onChange(function (e) {
+    gui.add(params, 'mult').min(0).max(1000).step(5).onChange(function(e) {
         scene.remove(mesh);
-        params.segment=Math.floor(params.segment);
+        params.segment = Math.floor(params.segment);
         createMesh();
     });
 
-    gui.add(params, 'trasl').min(0).max(100).step(1).onChange(function (e) {
+    gui.add(params, 'trasl').min(0).max(100).step(1).onChange(function(e) {
         scene.remove(mesh);
-        params.segment=Math.floor(params.segment);
+        params.segment = Math.floor(params.segment);
         createMesh();
     });
 
-    gui.add(params, 'level').min(0).max(100).step(1).onChange(function (e) {
+    gui.add(params, 'level').min(0).max(100).step(1).onChange(function(e) {
         scene.remove(mesh);
-        params.segment=Math.floor(params.segment);
+        params.segment = Math.floor(params.segment);
         createMesh();
     });
 
-    gui.add(params, 'barr').min(-100).max(100).step(1).onChange(function (e) {
+    gui.add(params, 'barr').min(-100).max(100).step(1).onChange(function(e) {
         scene.remove(mesh);
-        params.segment=Math.floor(params.segment);
+        params.segment = Math.floor(params.segment);
         createMesh();
     });
 
@@ -73,18 +73,18 @@ function init() {
     webGLRenderer.setSize(window.innerWidth, window.innerHeight);
     webGLRenderer.shadowMapEnabled = false;
 
-    createMesh(params["dimension"]);
+    createMesh(params.dimension);
 
     camera.position.x = 0;
     camera.position.y = 0;
     camera.position.z = 550;
-    camera.lookAt(new THREE.Vector3(0, 0 , 0));
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     var orbitControls = new THREE.OrbitControls(camera, webGLRenderer.domElement);
     orbitControls.autoRotate = false;
     var clock = new THREE.Clock();
 
-    orbitControls.center = new THREE.Vector3(0, 0 , 0);
+    orbitControls.center = new THREE.Vector3(0, 0, 0);
 
     var ambiLight = new THREE.AmbientLight(0x111111);
     scene.add(ambiLight);
@@ -98,45 +98,48 @@ function init() {
 
     render();
 
-    function createMesh () {
+    function createMesh() {
 
-        var noise=0;
+        var noise = 0;
 
-        geometry = new THREE.PlaneGeometry(params.dimension, params.dimension, (params.segment+1), (params.segment+1));
+        geometry = new THREE.PlaneGeometry(params.dimension, params.dimension, (params.segment + 1), (params.segment + 1));
         //geometry.rotateX( - Math.PI / 2 );
 
         var index = 0;
-        for(var i = 0; i <= params.segment; i++) {
-            for(var j = 0; j <= params.segment; j++) {
+        var i;
+        for (i = 0; i <= params.segment; i++) {
+            for (var j = 0; j <= params.segment; j++) {
 
                 var vertex = geometry.vertices[index];
                 //vertex.y = 1+terrainn[i][j];
 
                 //vertex.x += Math.random() * 20 - 10;
                 //vertex.y += Math.random() * 20 - 10;
-                noise = simplex.noise2D(i/params.fact, j/params.fact)*params.mult+params.trasl;
+                noise = simplex.noise2D(i / params.fact, j / params.fact) * params.mult + params.trasl;
 
-                if (noise<params.barr) 
-                    vertex.z=params.level;
-                else 
-                    vertex.z=noise;
+                if (noise < params.barr)
+                    vertex.z = params.level;
+                else
+                    vertex.z = noise;
 
                 index++;
             }
         }
 
-        for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
+        for (i = 0, l = geometry.faces.length; i < l; i++) {
 
 
-            var g=Math.floor((Math.random() * (180-120) + 120));
-            geometry.faces[ i ].color=new THREE.Color("rgb(0, "+g+", 0)");
+            var g = Math.floor((Math.random() * (180 - 120) + 120));
+            geometry.faces[i].color = new THREE.Color("rgb(0, " + g + ", 0)");
 
         }
 
-        material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors} );
+        material = new THREE.MeshLambertMaterial({
+            vertexColors: THREE.FaceColors
+        });
 
-        mesh = new THREE.Mesh( geometry, material );
-        scene.add( mesh );
+        mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
     }
 
     function render() {
